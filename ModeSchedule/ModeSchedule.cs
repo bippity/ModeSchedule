@@ -46,7 +46,8 @@ namespace ModeSchedule
         public override void Initialize()
         {
             Commands.ChatCommands.Add(new Command("modeschedule.edit", ModeScheduleCommand, "modeschedule"));
-            Timer.Interval = 3600000; //60 minutes
+			Timer.Interval = 1800000; //30 minutes
+			//Timer.Interval = 60000; //1 minute
             Timer.Enabled = true;
             Timer.Elapsed += new System.Timers.ElapsedEventHandler(TimerElapsed);
         }
@@ -69,18 +70,36 @@ namespace ModeSchedule
 
             if (enabled)
             {
-                args.Player.SendWarningMessage("[ModeSchedule] Mode scheduling is enabled.");
+                args.Player.SendSuccessMessage("[Mode Schedule] Mode scheduling is enabled.");
             }
             else
             {
-                args.Player.SendWarningMessage("[ModeSchedule] Mode scheduling is disabled.");
+                args.Player.SendWarningMessage("[Mode Schedule] Mode scheduling is disabled.");
             }
         }
 
         private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs args)
         {
-            DayOfWeek day = DateTime.Now.DayOfWeek;
+			if (!enabled)
+				return;
 
+            DayOfWeek today = DateTime.Now.DayOfWeek;
+			
+			if (today == DayOfWeek.Saturday || today == DayOfWeek.Sunday)
+			{
+				TSPlayer.All.SendInfoMessage("[Mode Schedule] It's the weekend! Hard/Expert mode is enabled!");
+				Main.hardMode = true;
+				Main.expertMode = true;
+			}
+			else
+			{
+				if (Main.hardMode || Main.expertMode)
+					TSPlayer.All.SendInfoMessage("[Mode Schedule] Today is: " + today.ToString() + ". Hard/Expert mode is only enabled on weekends!");
+
+				Main.hardMode = false;
+				Main.expertMode = false;
+			}
         }
-    }
+		#endregion
+	}
 }
