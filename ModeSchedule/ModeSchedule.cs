@@ -1,90 +1,81 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TShockAPI;
-using TShockAPI.Hooks;
 using Terraria;
 using TerrariaApi.Server;
 
 namespace ModeSchedule
 {
-    [ApiVersion(1, 23)]
-    public class ModeSchedule : TerrariaPlugin
-    {
-        #region Plugin Info
-        public override Version Version
-        {
-            get { return new Version("1.0"); }
-        }
+	[ApiVersion(1, 23)]
+	public class ModeSchedule : TerrariaPlugin
+	{
+		#region Plugin Info
+		public override Version Version
+		{
+			get { return new Version("1.0"); }
+		}
 
-        public override string Name
-        {
-            get { return "ModeScheduler"; }
-        }
+		public override string Name
+		{
+			get { return "ModeScheduler"; }
+		}
 
-        public override string Author
-        {
-            get { return "Bippity"; }
-        }
+		public override string Author
+		{
+			get { return "Bippity"; }
+		}
 
-        public override string Description
-        {
-            get { return "Schedule hard/expert mode"; }
-        }
+		public override string Description
+		{
+			get { return "Schedule hard/expert mode"; }
+		}
 
-        public  ModeSchedule(Main game) : base(game)
-        {
-            Order = 1;
-        }
-        #endregion
+		public ModeSchedule(Main game) : base(game)
+		{
+			Order = 1;
+		}
+		#endregion
 
-        #region Initialize/Dispose
-        public System.Timers.Timer Timer = new System.Timers.Timer();
+		#region Initialize/Dispose
+		public System.Timers.Timer Timer = new System.Timers.Timer();
 
-        public override void Initialize()
-        {
-            Commands.ChatCommands.Add(new Command("modeschedule.edit", ModeScheduleCommand, "modeschedule"));
+		public override void Initialize()
+		{
+			Commands.ChatCommands.Add(new Command("modeschedule.edit", ModeScheduleCommand, "modeschedule"));
 			Timer.Interval = 1800000; //30 minutes
-			//Timer.Interval = 60000; //1 minute
-            Timer.Enabled = true;
-            Timer.Elapsed += new System.Timers.ElapsedEventHandler(TimerElapsed);
-        }
+									  //Timer.Interval = 60000; //1 minute
+			Timer.Enabled = true;
+			Timer.Elapsed += new System.Timers.ElapsedEventHandler(TimerElapsed);
+		}
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                //stuff?
-            }
-            base.Dispose(disposing);
-        }
-        #endregion
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+		}
+		#endregion
 
-        #region ModeSchedule
-        bool enabled = true;
-        private void ModeScheduleCommand(CommandArgs args)
-        {
-            enabled = !enabled;
+		#region ModeSchedule
+		bool enabled = true;
+		private void ModeScheduleCommand(CommandArgs args)
+		{
+			enabled = !enabled;
 
-            if (enabled)
-            {
-                args.Player.SendSuccessMessage("[Mode Schedule] Mode scheduling is enabled.");
-            }
-            else
-            {
-                args.Player.SendWarningMessage("[Mode Schedule] Mode scheduling is disabled.");
-            }
-        }
+			if (enabled)
+			{
+				args.Player.SendSuccessMessage("[Mode Schedule] Mode scheduling is enabled.");
+			}
+			else
+			{
+				args.Player.SendWarningMessage("[Mode Schedule] Mode scheduling is disabled.");
+			}
+		}
 
-        private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs args)
-        {
+		private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs args)
+		{
 			if (!enabled)
 				return;
 
-            DayOfWeek today = DateTime.Now.DayOfWeek;
-			
+			DayOfWeek today = DateTime.Now.DayOfWeek;
+
 			if (today == DayOfWeek.Saturday || today == DayOfWeek.Sunday)
 			{
 				TSPlayer.All.SendInfoMessage("[Mode Schedule] It's the weekend! Hard/Expert mode is enabled!");
@@ -99,7 +90,7 @@ namespace ModeSchedule
 				Main.hardMode = false;
 				Main.expertMode = false;
 			}
-        }
+		}
 		#endregion
 	}
 }
