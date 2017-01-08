@@ -5,7 +5,7 @@ using TerrariaApi.Server;
 
 namespace ModeSchedule
 {
-	[ApiVersion(1, 23)]
+	[ApiVersion(2, 0)]
 	public class ModeSchedule : TerrariaPlugin
 	{
 		#region Plugin Info
