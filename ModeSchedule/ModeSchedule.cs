@@ -69,11 +69,12 @@ namespace ModeSchedule
 			}
 		}
 
+        DateTime oldDate;
 		private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs args)
 		{
 			if (!enabled)
 				return;
-
+            
 			DayOfWeek today = DateTime.Now.DayOfWeek;
 
 			if (today == DayOfWeek.Saturday || today == DayOfWeek.Sunday)
@@ -81,7 +82,29 @@ namespace ModeSchedule
 				TSPlayer.All.SendInfoMessage("[Mode Schedule] It's the weekend! Hard/Expert mode is enabled!");
 				Main.hardMode = true;
 				Main.expertMode = true;
-			}
+
+                if(today == DayOfWeek.Saturday)
+                {
+                    if (oldDate == null)
+                    {
+                        oldDate = DateTime.UtcNow;
+                    }
+                    else
+                    {
+                        //Check if 7 days passed (if it's a new saturday)
+                        if (DateTime.UtcNow.Subtract(oldDate) >= TimeSpan.FromMinutes(10080)) //7 days passed
+                        {
+                            WorldGen.crimson = !WorldGen.crimson;
+                            TSPlayer.All.SendData(PacketTypes.WorldInfo);
+
+                            oldDate = DateTime.UtcNow;
+                        }
+                    }
+
+
+                }
+                
+            }
 			else
 			{
 				if (Main.hardMode || Main.expertMode)
@@ -91,6 +114,9 @@ namespace ModeSchedule
 				Main.expertMode = false;
 			}
 		}
+
+        
+
 		#endregion
 	}
 }
