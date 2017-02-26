@@ -69,12 +69,12 @@ namespace ModeSchedule
 			}
 		}
 
-        DateTime oldDate;
+		DateTime oldDate;
 		private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs args)
 		{
 			if (!enabled)
 				return;
-            
+
 			DayOfWeek today = DateTime.Now.DayOfWeek;
 
 			if (today == DayOfWeek.Saturday || today == DayOfWeek.Sunday)
@@ -83,28 +83,28 @@ namespace ModeSchedule
 				Main.hardMode = true;
 				Main.expertMode = true;
 
-                if(today == DayOfWeek.Saturday)
-                {
-                    if (oldDate == null)
-                    {
-                        oldDate = DateTime.UtcNow;
-                    }
-                    else
-                    {
-                        //Check if 7 days passed (if it's a new saturday)
-                        if (DateTime.UtcNow.Subtract(oldDate) >= TimeSpan.FromMinutes(10080)) //7 days passed
-                        {
-                            WorldGen.crimson = !WorldGen.crimson;
-                            TSPlayer.All.SendData(PacketTypes.WorldInfo);
+				if (today == DayOfWeek.Saturday)
+				{
+					if (oldDate == null)
+					{
+						oldDate = DateTime.UtcNow;
+					}
+					else
+					{
+						//Check if 7 days passed (if it's a new saturday)
+						if (DateTime.UtcNow.Subtract(oldDate) >= TimeSpan.FromMinutes(10080)) //7 days passed
+						{
+							WorldGen.crimson = !WorldGen.crimson;
+							TSPlayer.All.SendData(PacketTypes.WorldInfo);
 
-                            oldDate = DateTime.UtcNow;
-                        }
-                    }
+							oldDate = DateTime.UtcNow;
+						}
+					}
 
 
-                }
-                
-            }
+				}
+
+			}
 			else
 			{
 				if (Main.hardMode || Main.expertMode)
@@ -114,9 +114,6 @@ namespace ModeSchedule
 				Main.expertMode = false;
 			}
 		}
-
-        
-
 		#endregion
 	}
 }
