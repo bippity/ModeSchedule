@@ -98,10 +98,9 @@ namespace ModeSchedule
 							TSPlayer.All.SendData(PacketTypes.WorldInfo);
 
 							oldDate = DateTime.UtcNow;
+							TSPlayer.All.SendInfoMessage("[Mode Schedule] It's a new week! The world is now: " + ((WorldGen.crimson) ? "Crimson" : "Corruption"));
 						}
 					}
-
-
 				}
 
 			}
