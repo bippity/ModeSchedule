@@ -11,7 +11,7 @@ namespace ModeSchedule
 		#region Plugin Info
 		public override Version Version
 		{
-			get { return new Version("1.0"); }
+			get { return new Version("1.1"); }
 		}
 
 		public override string Name
@@ -37,12 +37,13 @@ namespace ModeSchedule
 
 		#region Initialize/Dispose
 		public System.Timers.Timer Timer = new System.Timers.Timer();
+		public const int TIMER_INTERVAL_WEEKDAY = 1800000; //30 minutes, 60000 = 1 min
+		public const int TIMER_INTERVAL_WEEKEND = 7200000; //2 hours
 
 		public override void Initialize()
 		{
 			Commands.ChatCommands.Add(new Command("modeschedule.edit", ModeScheduleCommand, "modeschedule"));
-			Timer.Interval = 1800000; //30 minutes
-									  //Timer.Interval = 60000; //1 minute
+			Timer.Interval = TIMER_INTERVAL_WEEKDAY;
 			Timer.Enabled = true;
 			Timer.Elapsed += new System.Timers.ElapsedEventHandler(TimerElapsed);
 		}
@@ -77,12 +78,14 @@ namespace ModeSchedule
 
 			DayOfWeek today = DateTime.Now.DayOfWeek;
 
-			if (today == DayOfWeek.Saturday || today == DayOfWeek.Sunday)
+			if (today == DayOfWeek.Saturday || today == DayOfWeek.Sunday) //Every 2 hours, disable hardmode and make it expertmode
 			{
-				TSPlayer.All.SendInfoMessage("[Mode Schedule] It's the weekend! Hard/Expert mode is enabled!");
-				Main.hardMode = true;
+				TSPlayer.All.SendInfoMessage("[Mode Schedule] It's the weekend! Expert mode is enabled!");
+				Main.hardMode = false;
 				Main.expertMode = true;
+				Timer.Interval = TIMER_INTERVAL_WEEKEND;
 
+				//Change between Crimson/Corruption
 				if (today == DayOfWeek.Saturday)
 				{
 					if (oldDate == null)
@@ -102,15 +105,15 @@ namespace ModeSchedule
 						}
 					}
 				}
-
 			}
-			else
+			else //it's a weekday
 			{
 				if (Main.hardMode || Main.expertMode)
 					TSPlayer.All.SendInfoMessage("[Mode Schedule] Today is: " + today.ToString() + ". Hard/Expert mode is only enabled on weekends!");
 
 				Main.hardMode = false;
 				Main.expertMode = false;
+				Timer.Interval = TIMER_INTERVAL_WEEKDAY;
 			}
 		}
 		#endregion
